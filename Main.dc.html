@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HASM Command Center</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;color:#0A1A33}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible{outline:4px solid #F5B301;outline-offset:2px}
+</style>
+</helmet>
+<div style="width:100%;min-height:100vh;background:#F3F5F8;display:flex;flex-direction:column">
+
+<div style="background:#fff;border-bottom:1px solid #E1E6EE;padding:8px 40px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+<div style="width:190px;height:66px;overflow:hidden"><img src="./assets/7ad5605c949e27d9a8b66ebac8217183.png" alt="HASM حسم" style="width:200px;height:200px;margin:-68px 0 0 -6px;display:block"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button onClick="{{goOver}}" style="{{tab1}}">OVERVIEW</button>
+<button onClick="{{goInc}}" style="{{tab2}}">INCIDENT</button>
+<button onClick="{{goQueue}}" style="{{tab3}}">ACTION QUEUE</button>
+</div>
+</div>
+
+<sc-if value="{{s1}}" hint-placeholder-val="{{true}}">
+<div style="padding:28px 40px 0">
+<div style="font-size:22px;font-weight:700;margin-bottom:12px">CURRENT PRIORITIES</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+<div style="background:#D92D20;color:#fff;border-radius:16px;padding:16px 24px;display:flex;align-items:baseline;gap:14px"><span style="font-size:56px;font-weight:700;line-height:1">5</span><span style="font-size:22px;font-weight:700">Critical</span></div>
+<div style="background:#E8590C;color:#fff;border-radius:16px;padding:16px 24px;display:flex;align-items:baseline;gap:14px"><span style="font-size:56px;font-weight:700;line-height:1">5</span><span style="font-size:22px;font-weight:700">High</span></div>
+<div style="background:#F5B301;color:#0A1A33;border-radius:16px;padding:16px 24px;display:flex;align-items:baseline;gap:14px"><span style="font-size:56px;font-weight:700;line-height:1">5</span><span style="font-size:22px;font-weight:700">Medium</span></div>
+<div style="background:#15803D;color:#fff;border-radius:16px;padding:16px 24px;display:flex;align-items:baseline;gap:14px"><span style="font-size:56px;font-weight:700;line-height:1">5</span><span style="font-size:22px;font-weight:700">Low</span></div>
+</div>
+</div>
+
+<div style="padding:28px 40px;display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+<div style="flex:1.35 1 560px;min-width:0">
+<div style="font-size:22px;font-weight:700;margin-bottom:12px">LIVE EXPO MAP</div>
+<div style="background:#fff;border-radius:20px;padding:16px">
+<dc-import name="VenueMap" z="{{ mapZ }}" pins="{{ mapPins }}" on-zone="{{ onZone }}" on-pin="{{ onPin }}" hint-size="100%,480px"></dc-import>
+<div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;font-size:16px;font-weight:700">
+<span><span style="color:#D92D20">●</span> Critical</span><span><span style="color:#E8590C">●</span> High</span><span><span style="color:#F5B301">●</span> Medium</span><span><span style="color:#15803D">●</span> Low</span>
+</div>
+</div>
+</div>
+
+<div style="flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:14px">
+<div style="font-size:22px;font-weight:700">WHAT NEEDS ACTION NOW</div>
+<sc-for list="{{top3}}" as="c" hint-placeholder-count="3">
+<div style="{{c.style}}" onMouseEnter="{{c.hover}}">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="background:#D92D20;color:#fff;font-weight:700;font-size:15px;padding:3px 10px;border-radius:6px">P1 CRITICAL</span>
+<sc-if value="{{c.hasStatus}}" hint-placeholder-val="{{false}}"><span style="background:#15803D;color:#fff;font-weight:700;font-size:15px;padding:3px 10px;border-radius:6px">{{c.status}}</span></sc-if></div>
+<div style="font-size:22px;font-weight:700">{{c.title}} · {{c.loc}}</div>
+<div style="font-size:16px;color:#475467">{{c.summary}}</div>
+<div style="font-size:26px;font-weight:700;line-height:1.1;margin-top:4px">{{c.action}}</div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between"><span style="font-size:16px;color:#475467;font-weight:500">Team · {{c.team}}</span>
+<button onClick="{{c.view}}" style="background:#0A1A33;color:#fff;border:0;border-radius:10px;font-size:17px;font-weight:700;padding:0 22px;min-height:44px">View Incident →</button></div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="margin:0 40px 40px;background:#0A1A33;color:#fff;border-radius:20px;padding:24px 36px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
+<div><div style="font-size:56px;font-weight:700;line-height:1;color:#9AA8BF">120</div><div style="font-size:16px;font-weight:700;letter-spacing:2px;color:#9AA8BF">RAW ALERTS TODAY</div></div>
+<div style="text-align:center;font-size:18px;font-weight:700;color:#9AA8BF">Correlate · Classify · Decide<div style="font-size:36px;line-height:1;color:#fff">→</div></div>
+<div><div style="font-size:56px;font-weight:700;line-height:1">20</div><div style="font-size:16px;font-weight:700;letter-spacing:2px">ACTIONABLE INCIDENTS</div></div>
+<div><div style="font-size:56px;font-weight:700;line-height:1;color:#4ADE80">83%</div><div style="font-size:16px;font-weight:700;letter-spacing:2px;color:#4ADE80">LESS NOISE FOR OPERATORS</div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{s2}}" hint-placeholder-val="{{false}}">
+<div style="padding:24px 40px 56px;display:flex;flex-direction:column;gap:28px">
+<div><button onClick="{{goOver}}" style="background:transparent;border:0;font-size:18px;font-weight:700;color:#0A1A33;padding:8px 0">← BACK TO OVERVIEW</button></div>
+
+<div style="background:#0A1A33;color:#fff;border-radius:24px;padding:clamp(24px,3vw,40px);display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between">
+<div style="flex:1 1 420px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span style="background:{{cur.pc}};color:#fff;font-weight:700;font-size:18px;padding:4px 14px;border-radius:8px">{{cur.p}} {{cur.plabel}}</span>
+<sc-if value="{{hasStatus}}" hint-placeholder-val="{{false}}"><span style="background:#15803D;color:#fff;font-weight:700;font-size:18px;padding:4px 14px;border-radius:8px">{{status}}</span></sc-if></div>
+<div style="font-size:clamp(30px,4vw,48px);font-weight:700;line-height:1.1">{{cur.head}}</div>
+<div style="font-size:20px;color:#B8C3D6">{{cur.where}}</div>
+<div style="font-size:20px;color:#B8C3D6;margin-top:8px">Priority Score · <span style="color:#fff;font-weight:700;font-size:28px">{{cur.score}} / 100</span></div>
+</div>
+<div style="flex:1 1 420px;background:#fff;color:#0A1A33;border-radius:18px;padding:24px 28px;display:flex;flex-direction:column;gap:6px">
+<div style="font-size:15px;font-weight:700;letter-spacing:3px;color:#475467">RECOMMENDED ACTION</div>
+<div style="font-size:clamp(30px,3.6vw,44px);font-weight:700;line-height:1.1">{{cur.action}}</div>
+<div style="font-size:19px;font-weight:700">Team · {{cur.team}}</div>
+<div style="font-size:17px;color:#475467">Then: {{cur.second}}</div>
+</div>
+</div>
+
+<div>
+<div style="font-size:22px;font-weight:700;margin-bottom:12px">WHY THIS INCIDENT IS PRIORITY #1</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
+<sc-for list="{{cur.reasons}}" as="r" hint-placeholder-count="5">
+<div style="background:#fff;border-radius:16px;padding:18px 22px"><div style="{{r.vs}}">{{r.v}}</div><div style="font-size:17px;font-weight:700;color:#475467;margin-top:4px">{{r.l}}</div></div>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+<div style="flex:1.6 1 520px;min-width:0">
+<div style="font-size:22px;font-weight:700;margin-bottom:12px">RELATED ALERTS CORRELATED INTO ONE INCIDENT</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+<sc-for list="{{cur.alerts}}" as="a" hint-placeholder-count="8">
+<div style="background:#0A1A33;color:#fff;border-radius:14px;padding:14px 18px"><div style="font-size:13px;font-weight:700;letter-spacing:2px;color:#F5B301">{{a.s}}</div><div dir="auto" style="font-size:16px;line-height:1.5;margin-top:6px;word-break:break-word">{{a.t}}</div></div>
+</sc-for>
+</div>
+<div style="margin-top:14px;background:#fff;border:2px solid #0A1A33;border-radius:14px;padding:16px 22px;font-size:22px;font-weight:700">{{cur.n}} alerts · {{cur.nsrc}} sources → merged into 1 incident</div>
+</div>
+<div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:28px">
+<div style="background:#fff;border-radius:20px;padding:24px 28px">
+<div style="font-size:22px;font-weight:700;margin-bottom:14px">TIMELINE</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<sc-for list="{{cur.timeline}}" as="t" hint-placeholder-count="5">
+<div style="display:flex;gap:16px;align-items:baseline"><span style="font-size:20px;font-weight:700;min-width:64px">{{t.t}}</span><span style="font-size:18px;color:#475467;font-weight:500">{{t.e}}</span></div>
+</sc-for>
+</div>
+</div>
+<div style="background:#fff;border-radius:20px;padding:24px 28px">
+<div style="font-size:22px;font-weight:700;margin-bottom:14px">ALERTS BY SOURCE</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{srcBars}}" as="b" hint-placeholder-count="3">
+<div style="display:grid;grid-template-columns:170px minmax(0,1fr) 32px;gap:12px;align-items:center;font-size:16px;font-weight:700">
+<span style="color:#475467">{{b.name}}</span>
+<div style="height:14px;border-radius:7px;background:#E6EBF3"><div style="width:{{b.w}};height:14px;border-radius:7px;background:#0A1A33"></div></div>
+<span style="text-align:right">{{b.n}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+
+<div>
+<div style="font-size:22px;font-weight:700;margin-bottom:12px">ACTIONS</div>
+<div style="display:flex;flex-wrap:wrap;gap:12px">
+<button onClick="{{assign}}" style="background:#0A1A33;color:#fff;border:0;border-radius:12px;font-size:19px;font-weight:700;padding:0 32px;min-height:56px">Assign Team</button>
+<button onClick="{{escalate}}" style="background:#D92D20;color:#fff;border:0;border-radius:12px;font-size:19px;font-weight:700;padding:0 32px;min-height:56px">Escalate</button>
+<button onClick="{{ack}}" style="background:#fff;color:#0A1A33;border:2px solid #0A1A33;border-radius:12px;font-size:19px;font-weight:700;padding:0 32px;min-height:56px">Acknowledge</button>
+<button onClick="{{resolve}}" style="background:#fff;color:#15803D;border:2px solid #15803D;border-radius:12px;font-size:19px;font-weight:700;padding:0 32px;min-height:56px">Resolve</button>
+<button onClick="{{goQueue}}" style="background:transparent;color:#0A1A33;border:0;font-size:19px;font-weight:700;padding:0 16px;min-height:56px">Open Action Queue →</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{s3}}" hint-placeholder-val="{{false}}">
+<div style="padding:28px 40px 56px;display:flex;flex-direction:column;gap:24px">
+<div><div style="font-size:40px;font-weight:700;line-height:1.1">ACTION QUEUE</div><div style="font-size:20px;color:#475467;margin-top:4px">Decisions ranked by operational urgency</div></div>
+<div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start">
+<div style="flex:1.2 1 480px;min-width:0;display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{queue}}" as="q" hint-placeholder-count="4">
+<button onClick="{{q.open}}" style="{{q.style}}">
+<span style="{{q.rankStyle}}">{{q.rank}}</span>
+<span style="flex:1 1 220px;min-width:0;display:flex;flex-direction:column;gap:4px">
+<span style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span style="{{q.chip}}">{{q.p}}</span>
+<sc-if value="{{q.hasStatus}}" hint-placeholder-val="{{false}}"><span style="background:#15803D;color:#fff;font-weight:700;font-size:14px;padding:2px 10px;border-radius:6px">{{q.status}}</span></sc-if></span>
+<span style="font-size:20px;font-weight:700">{{q.title}}</span>
+<span style="font-size:22px;font-weight:700;text-transform:uppercase;color:#0A1A33">{{q.action}}</span>
+<span style="font-size:15px;color:#475467;font-weight:500">TEAM · {{q.team}}</span>
+</span>
+<span style="font-size:28px;color:#8C9BB5">›</span>
+</button>
+</sc-for>
+</div>
+
+<div style="flex:1 1 380px;min-width:0;background:#0A1A33;color:#fff;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px">
+<div><div style="font-size:26px;font-weight:700">AI Recommendation</div><div style="font-size:17px;color:#B8C3D6">What to focus on right now</div></div>
+<div style="background:#12284A;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:10px;align-items:center"><span style="background:#D92D20;font-weight:700;font-size:14px;letter-spacing:2px;padding:4px 12px;border-radius:6px">FOCUS NOW</span><span style="font-weight:700;font-size:20px">P1 · 94</span></div>
+<div style="font-size:24px;font-weight:700;line-height:1.2">Rising crowd congestion at main entrance</div>
+<div style="font-size:16px;color:#B8C3D6">Gate A · Zone A · Saudi Arabia</div>
+<div style="font-size:17px">8 alerts from 4 sources in 3 min<br>Peak area density 99%</div>
+<div style="border-top:1px solid #2B4268;padding-top:12px"><div style="font-size:13px;font-weight:700;letter-spacing:2px;color:#F5B301">RECOMMENDED RESPONSE</div>
+<div style="font-size:19px;font-weight:700;margin-top:4px">Open an extra entry lane and send Crowd Management immediately</div>
+<div style="font-size:16px;color:#B8C3D6;margin-top:4px">Team · Crowd Management</div></div>
+</div>
+<button onClick="{{openUtil}}" style="background:transparent;border:1px solid #2B4268;border-radius:12px;color:#fff;text-align:left;padding:12px 16px;font-size:16px"><span style="color:#B8C3D6">Next:</span> <b>Smoke and rising heat in Utility Room B4</b></button>
+<button onClick="{{openGate}}" style="background:#fff;color:#0A1A33;border:0;border-radius:12px;font-size:19px;font-weight:700;padding:0 20px;min-height:56px">See full reasoning and respond →</button>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state={screen:'over',sel:'gate',st:{}}; }
+  renderVals() {
+    const s=this.state, set=(o)=>this.setState(o);
+    const rep=(src,t,n)=>Array.from({length:n},()=>({s:src,t}));
+    const V=(v,l)=>({v,l,vs:'font-weight:700;line-height:1.1;'+(v.length>4?'font-size:24px;padding:12px 0':'font-size:48px')});
+    const D={
+      gate:{p:'P1',title:'Crowd Congestion',head:'Crowd Congestion at Main Entrance',loc:'Gate A',zone:'A',where:'Gate A · Zone A · Saudi Arabia',score:94,summary:'99% crowd density · 8 related alerts',action:'OPEN EXTRA ENTRY LANE',team:'Crowd Management',second:'Send Crowd Management team immediately',n:8,nsrc:4,
+        reasons:[V('99%','Crowd Density'),V('8','Related Alerts'),V('4','Independent Sources'),V('↑','Increasing Trend'),V('Main Entry Gate','Critical Location')],
+        alerts:[{s:'VISITOR APP',t:'بلاغ زائر: تكدس متصاعد عند بوابة الدخول الرئيسية عند Gate A.'},{s:'VISITOR APP',t:'بلاغ زائر: تكدس متصاعد عند بوابة الدخول الرئيسية عند Gate A.'},{s:'CCTV ANALYTICS',t:'CROWD_ALERT | location=Gate A | density=99% | trend=RISING'},{s:'CROWD SENSOR',t:'CROWD_SENSOR | location=Gate A | occupancy=96% | threshold=EXCEEDED'},{s:'VISITOR APP',t:'بلاغ زائر: تكدس متصاعد عند بوابة الدخول الرئيسية عند Gate A.'},{s:'STAFF APP',t:'المشرف بالموقع يفيد بوجود تكدس متصاعد عند بوابة الدخول الرئيسية - Gate A.'},{s:'CROWD SENSOR',t:'CROWD_SENSOR | location=Gate A | occupancy=93% | threshold=EXCEEDED'},{s:'STAFF APP',t:'بلاغ ميداني: تكدس متصاعد عند بوابة الدخول الرئيسية في Gate A. يرجى التوجيه.'}],
+        timeline:[{t:'18:00',e:'Visitor Report'},{t:'18:02',e:'CCTV Confirmation (density 99%)'},{t:'18:02',e:'Crowd Sensor Alert'},{t:'18:02',e:'Staff Report'},{t:'18:03',e:'Priority upgraded to P1'}]},
+      util:{p:'P1',title:'Smoke + Heat',head:'Smoke + Heat in Utility Room',loc:'Utility Room B4',zone:'B',where:'Utility Room B4 · Zone B · UAE',score:91,summary:'Multiple signals confirmed',action:'ISOLATE AREA NOW',team:'Safety Response',second:'Cut power source',n:8,nsrc:2,
+        reasons:[V('8','Related Alerts'),V('2','Independent Sources'),V('6','CCTV Detections'),V('Critical','Source Severity'),V('Utility Room B4','Critical Location')],
+        alerts:[...rep('CCTV ANALYTICS','VIDEO_ANALYTICS | visual anomaly detected | location=Utility Room B4',3),{s:'STAFF APP',t:'بلاغ ميداني: دخان وارتفاع حرارة في غرفة خدمات في Utility Room B4. يرجى التوجيه.'},{s:'STAFF APP',t:'المشرف بالموقع يفيد بوجود دخان وارتفاع حرارة في غرفة خدمات - Utility Room B4.'},...rep('CCTV ANALYTICS','VIDEO_ANALYTICS | visual anomaly detected | location=Utility Room B4',3)],
+        timeline:[{t:'18:04',e:'CCTV anomaly'},{t:'18:05',e:'Staff Report'},{t:'18:06',e:'More CCTV detections'},{t:'18:07',e:'Priority upgraded to P1'}]},
+      med:{p:'P1',title:'Medical Emergency',head:'Medical Emergency at Food Court',loc:'Food Court G1',zone:'G',where:'Food Court G1 · Zone G · Egypt',score:89,summary:'Visitor fainted · 7 related alerts',action:'DISPATCH MEDICAL TEAM',team:'Medical Response',second:'Open access path',n:7,nsrc:3,
+        reasons:[V('7','Related Alerts'),V('3','Independent Sources'),V('2','CCTV Detections'),V('Critical','Source Severity'),V('Food Court G1','Critical Location')],
+        alerts:[{s:'VISITOR APP',t:'بلاغ زائر: حالة إغماء مع عدة بلاغات عند Food Court G1.'},{s:'STAFF APP',t:'بلاغ ميداني: حالة إغماء مع عدة بلاغات في Food Court G1. يرجى التوجيه.'},{s:'CCTV ANALYTICS',t:'VIDEO_ANALYTICS | possible person-down event | location=Food Court G1'},{s:'VISITOR APP',t:'بلاغ زائر: حالة إغماء مع عدة بلاغات عند Food Court G1.'},{s:'STAFF APP',t:'تم رصد حالة إغماء مع عدة بلاغات بالموقع Food Court G1 ويحتاج متابعة.'},{s:'CCTV ANALYTICS',t:'VIDEO_ANALYTICS | possible person-down event | location=Food Court G1'},{s:'STAFF APP',t:'المشرف بالموقع يفيد بوجود حالة إغماء مع عدة بلاغات - Food Court G1.'}],
+        timeline:[{t:'18:08',e:'Visitor Report'},{t:'18:08',e:'Staff Report'},{t:'18:08',e:'CCTV person-down'},{t:'18:09',e:'Priority upgraded to P1'}]},
+      acc:{p:'P1',title:'Restricted Access Attempts',head:'Repeated Entry Attempts at Restricted Area',loc:'Restricted Access C9',zone:'C',where:'Restricted Access C9 · Zone C · Japan',score:86,summary:'Access denied repeatedly · 7 related alerts',action:'LOCK ACCESS POINT',team:'Security',second:'Send security to verify identity',n:7,nsrc:3,
+        reasons:[V('7','Related Alerts'),V('3','Independent Sources'),V('3','Access Denials'),V('Critical','Source Severity'),V('Restricted Access C9','Critical Location')],
+        alerts:[{s:'CCTV ANALYTICS',t:'VIDEO_ANALYTICS | anomalous activity | location=Restricted Access C9 | review_required=true'},{s:'ACCESS CONTROL',t:'ACCESS_CONTROL | status=DENIED | repeated_attempt=true | location=Restricted Access C9'},{s:'CCTV ANALYTICS',t:'VIDEO_ANALYTICS | anomalous activity | location=Restricted Access C9 | review_required=true'},{s:'ACCESS CONTROL',t:'ACCESS_CONTROL | status=DENIED | repeated_attempt=true | location=Restricted Access C9'},{s:'ACCESS CONTROL',t:'ACCESS_CONTROL | status=DENIED | repeated_attempt=true | location=Restricted Access C9'},{s:'STAFF APP',t:'المشرف بالموقع يفيد بوجود محاولات دخول متكررة لمنطقة مقيدة - Restricted Access C9.'},{s:'STAFF APP',t:'بلاغ ميداني: محاولات دخول متكررة لمنطقة مقيدة في Restricted Access C9. يرجى التوجيه.'}],
+        timeline:[{t:'18:12',e:'CCTV anomaly'},{t:'18:13',e:'Access Control denial'},{t:'18:15',e:'Staff Report'},{t:'18:15',e:'Priority upgraded to P1'}]},
+      pow:{p:'P1',title:'Power Outage',head:'Power Outage in Active Hall',loc:'Hall D1',zone:'D',where:'Hall D1 · Zone D · Germany',score:84,summary:'Power supply fault · 7 related alerts',action:'SWITCH TO BACKUP POWER',team:'Facilities + Safety',second:'Send electrical team and assess evacuation',n:7,nsrc:2,
+        reasons:[V('7','Related Alerts'),V('2','Independent Sources'),V('5','BMS Fault Alerts'),V('Critical','Source Severity'),V('Hall D1','Critical Location')],
+        alerts:[...rep('IOT/BMS','BMS_ALERT | power_supply=FAULT | location=Hall D1',2),{s:'OPERATIONS SYSTEM',t:'OPS_EVENT | category=FACILITIES | location=Hall D1 | status=OPEN'},...rep('IOT/BMS','BMS_ALERT | power_supply=FAULT | location=Hall D1',2),{s:'OPERATIONS SYSTEM',t:'OPS_EVENT | category=FACILITIES | location=Hall D1 | status=OPEN'},{s:'IOT/BMS',t:'BMS_ALERT | power_supply=FAULT | location=Hall D1'}],
+        timeline:[{t:'18:16',e:'BMS power fault'},{t:'18:17',e:'Ops System event'},{t:'18:19',e:'More BMS faults'},{t:'18:19',e:'Priority upgraded to P1'}]},
+      tick:{p:'P2',title:'Ticketing Failure',head:'Ticketing Failure at A1',loc:'Ticketing A1',zone:'A',where:'Ticketing A1 · Zone A · Saudi Arabia',score:72,summary:'Two ticket gates down at peak time',action:'REDIRECT VISITORS',team:'Operations + IT',second:'Send technical support',n:6,nsrc:3,
+        reasons:[V('6','Related Alerts'),V('3','Independent Sources'),V('P2','Priority'),V('High','Source Severity'),V('Ticketing A1','Location')],
+        alerts:[{s:'STAFF APP',t:'تم رصد تعطل بوابتين للتذاكر وقت الذروة بالموقع Ticketing A1 ويحتاج متابعة.'},{s:'STAFF APP',t:'المشرف بالموقع يفيد بوجود تعطل بوابتين للتذاكر وقت الذروة - Ticketing A1.'},...rep('SERVICE DESK','بلاغ مركز الخدمة: تعطل بوابتين للتذاكر وقت الذروة | الموقع: Ticketing A1',2),...rep('OPERATIONS SYSTEM','OPS_EVENT | category=OPERATIONS | location=Ticketing A1 | status=OPEN',2)],
+        timeline:[{t:'18:36',e:'Staff Report'},{t:'18:36',e:'Service Desk Report'},{t:'18:38',e:'Ops System event'},{t:'18:39',e:'Priority set to P2'}]}
+    };
+    Object.values(D).forEach(d=>{d.pc=d.p==='P1'?'#D92D20':'#E8590C';d.plabel=d.p==='P1'?'CRITICAL':'HIGH';});
+    const id=s.sel, cur=D[id];
+    const tab=(on)=>'border:0;border-radius:10px;font-size:16px;font-weight:700;letter-spacing:2px;padding:0 20px;min-height:44px;'+(on?'background:#0A1A33;color:#fff':'background:#EEF1F6;color:#0A1A33');
+    const INC=[[1,'A','P1','Rising crowd congestion at main entrance','Gate A',8],[2,'B','P1','Smoke and rising heat in utility room','Utility Room B4',8],[3,'G','P1','Visitor fainted, multiple reports','Food Court G1',7],[4,'C','P1','Repeated entry attempts at restricted area','Restricted Access C9',7],[5,'D','P1','Power outage in an active hall','Hall D1',7],[6,'C','P2','Long, growing queue at security check','Security Check C1',7],[7,'A','P2','Slippery floor in a busy corridor','Main Corridor A5',7],[8,'J','P2','Possible heat exhaustion of a visitor','Outdoor Walkway J5',6],[9,'E','P2','AC failure in a crowded pavilion','Pavilion E3',6],[10,'A','P2','Two ticket gates down at peak time','Ticketing A1',6],[11,'E','P3','Unusual gathering near a popular pavilion','Pavilion E7',6],[12,'G','P3','Staff report of suspicious behavior','Pavilion G4',6],[13,'G','P3','Minor water leak in a restroom','Restroom G3',5],[14,'F','P3','One ticket scanner stopped','Gate F2',5],[15,'G','P3','Repeated cleaning reports at the same spot','Food Court G4',5],[16,'J','P4','Visitors gathering for photos','Landmark J1',5],[17,'H','P4','Wheelchair request','Visitor Center H1',5],[18,'J','P4','Broken light fixture','Corridor J2',5],[19,'I','P4','Badge printer stopped','Staff Services I1',5],[20,'B','P4','Visitor lost a personal item','Info Desk B1',4]];
+    const PC={P1:['#D92D20','rgba(217,45,32,0.30)','#B42318','Critical'],P2:['#E8590C','rgba(232,89,12,0.30)','#C2410C','High'],P3:['#F5B301','rgba(245,179,1,0.32)','#8A5A00','Medium'],P4:['#15803D','rgba(21,128,61,0.24)','#15803D','Low']};
+    const PIN={1:'gate',2:'util',3:'med',4:'acc',5:'pow',10:'tick'};
+    const mapZ={};
+    'ABCDEFGHIJ'.split('').forEach(k=>{const list=INC.filter(i=>i[1]===k);const top=list.map(i=>i[2]).sort()[0];const c=PC[top];const on=cur.zone===k&&s.screen==='over';
+      mapZ[k]={fill:c[1],stroke:on?'#0A1A33':c[0],sw:on?8:4,anim:top==='P1'?'1;0.35;1':'1;1;1',text:c[2],short:c[3]+' · '+list.length};});
+    const mapPins={};
+    INC.forEach(i=>{const hot=i[2]==='P1';mapPins['S'+i[0]]={op:1,pe:'auto',fill:PC[i[2]][0],ringR:hot?'13;34':'13;13',ringO:hot?'0.9;0':'0;0',title:i[2]+' · '+i[3]+' ('+i[4]+')'};});
+    const stOf=(k)=>s.st[k]||'';
+    const top3=['gate','util','med'].map(k=>{const d=D[k];
+      return {title:d.title,loc:d.loc,summary:d.summary,action:d.action,team:d.team,status:stOf(k),hasStatus:!!stOf(k),
+        style:'background:#fff;border-radius:18px;padding:18px 22px;display:flex;flex-direction:column;gap:8px;'+(id===k?'box-shadow:0 0 0 4px #0A1A33':''),
+        hover:()=>{if(s.sel!==k)set({sel:k})},view:()=>set({sel:k,screen:'inc'})};});
+    const queue=['gate','util','med','acc','pow','tick'].map((k,i)=>{const d=D[k];
+      return {rank:'0'+(i+1),p:d.p,title:d.title+' — '+d.loc,action:d.action,team:d.team,status:stOf(k),hasStatus:!!stOf(k),open:()=>set({sel:k,screen:'inc'}),
+        style:'text-align:left;border:0;display:flex;flex-wrap:wrap;gap:20px;align-items:center;border-radius:18px;padding:'+(i===0?'24px 28px':'18px 28px')+';background:#fff;color:#0A1A33;'+(i===0?'box-shadow:0 0 0 3px #0A1A33':''),
+        rankStyle:'font-size:'+(i===0?'44px':'34px')+';font-weight:700;color:'+(i===0?'#0A1A33':'#8C9BB5')+';min-width:56px',
+        chip:'color:#fff;font-weight:700;font-size:14px;padding:2px 10px;border-radius:6px;background:'+d.pc};});
+    const mark=(t)=>()=>set({st:{...s.st,[id]:t}});
+    return {
+      s1:s.screen==='over',s2:s.screen==='inc',s3:s.screen==='queue',
+      tab1:tab(s.screen==='over'),tab2:tab(s.screen==='inc'),tab3:tab(s.screen==='queue'),
+      goOver:()=>set({screen:'over'}),goInc:()=>set({screen:'inc'}),goQueue:()=>set({screen:'queue'}),
+      openGate:()=>set({sel:'gate',screen:'inc'}),openUtil:()=>set({sel:'util',screen:'inc'}),
+      top3,queue,cur,status:stOf(id),hasStatus:!!stOf(id),
+      mapZ,mapPins,onZone:()=>{},onPin:(n)=>{if(PIN[n])set({sel:PIN[n]})},
+      srcBars:(()=>{const c={};cur.alerts.forEach(a=>{c[a.s]=(c[a.s]||0)+1;});const mx=Math.max(...Object.values(c));return Object.keys(c).sort((x,y)=>c[y]-c[x]).map(k=>({name:k,n:c[k],w:Math.round(c[k]/mx*100)+'%'}));})(),
+      assign:mark('TEAM DISPATCHED'),escalate:mark('ESCALATED'),ack:mark('ACKNOWLEDGED'),resolve:mark('RESOLVED')
+    };
+  }
+}
+</script>
+</body>
+</html>
